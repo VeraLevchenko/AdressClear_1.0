@@ -1,4 +1,5 @@
 import openpyxl
+import pandas as pd
 
 from semantic import get_street, get_kooperativ, get_kvartal, get_snt
 from number import getBuild, getKorpus, getGarage
@@ -42,17 +43,17 @@ def get_clear_adress(input_adress):
         )
     return clear_adress
 if __name__ == "__main__":
-    print("Running test")
-    clear_adress = get_clear_adress("пр. Октябрьский, д.16")
-    print(clear_adress)
-    clear_adress = get_clear_adress("ул. М. Тореза, д.109")
-    print(clear_adress)
-    clear_adress = get_clear_adress("ул. 40 лет ВЛКСМ, д.98")
-    print(clear_adress)
-    clear_adress = get_clear_adress("ул. 11 Гвардейской Армии, дом 2")
-    print(clear_adress)
-    clear_adress = get_clear_adress("Пионерский, д.37")
-    print(clear_adress)
+    # print("Running test")
+    # clear_adress = get_clear_adress("пр. Октябрьский, д.16")
+    # print(clear_adress)
+    # clear_adress = get_clear_adress("ул. М. Тореза, д.109")
+    # print(clear_adress)
+    # clear_adress = get_clear_adress("ул. 40 лет ВЛКСМ, д.98")
+    # print(clear_adress)
+    # clear_adress = get_clear_adress("ул. 11 Гвардейской Армии, дом 2")
+    # print(clear_adress)
+    # clear_adress = get_clear_adress("Пионерский, д.37")
+    # print(clear_adress)
 
     # wb = openpyxl.load_workbook('D:/project_Python/518_UPR_COMP/resultAdressclearUPR.xlsx')
     # sheet = wb.active
@@ -67,3 +68,30 @@ if __name__ == "__main__":
     #     wb.save('D:/project_Python/518_UPR_COMP/resultAdressclearUPR.xlsx')
     #     print(clearData)
 
+    rez = []
+    filename = 'Data_delete_new_project\Списки адресов от МЖЦ по 518-фз.xlsx'
+    df = pd.read_excel(filename, index_col=0, sheet_name='Общий')
+             # Сброс ограничений на количество выводимых рядов
+    # pd.set_option('display.max_rows', 10)
+            # отключаем перенос табл на другую строку
+    pd.options.display.expand_frame_repr = False
+            # Сброс ограничений на число столбцов
+    pd.set_option('display.max_columns', 10)
+            # Сброс ограничений на количество символов в записи
+    pd.set_option('display.max_colwidth', 50)
+
+    print(df.head(10))
+    # len(df.index)
+    for i in range(0, len(df.index)):
+        print(f"{i}из{len(df.index)}")
+        # data1 = f"{str(df.iloc[i]['Адрес'])} ,д.{str(df.iloc[i]['№ дома'])}"
+        data1 =str(df.iloc[i]['Адрес ПОМ'])
+        data2 = get_clear_adress(data1)
+        print(data2)
+        data3 = f"{str(data2['street'])}, д {str(data2['build'])}, кв {str(data2['pom'])}"
+        rez.append(data3)
+        print(rez)
+    df.insert(loc=len(df.columns), column='add', value=rez)
+    df.to_excel(r'Data_delete_new_project\result.xlsx', index=False)
+
+    # print(df.head(20))
